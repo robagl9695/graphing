@@ -26,8 +26,7 @@ None.
 
 ## Tasks done
 
-T0.1 Repository scaffold (S002, commit `049f7a7`). AC1 verified on Python 3.14.7, not
-3.12 (not installed here); to be re-checked in CI (T0.3).
+T0.1 Repository scaffold (S002, commits `049f7a7`, `197ef27`). All AC verified on Python 3.12.10.
 
 ## Tasks not started
 
