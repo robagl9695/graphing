@@ -3,11 +3,11 @@
 > Read at the start of every session, after `CLAUDE.md`. Maintained without prior
 > approval; every change is reported.
 
-Last updated: 2026-11-14T02:30-06:00 · Session S002
+Last updated: 2026-11-14T16:57-06:00 · Session S003
 
 ## Next action
 
-**T0.2** (see `ROUTE.md`, model per its block). Present the plan to Rob, wait for approval.
+**T0.3** (see `ROUTE.md`, model per its block). Present the plan to Rob, wait for approval.
 
 The four governance files were approved by Rob and written to the repository root on
 2026-11-14. Planning (S001) is closed; the project is ready for Claude Code.
@@ -27,10 +27,13 @@ None.
 ## Tasks done
 
 T0.1 Repository scaffold (S002, commits `049f7a7`, `197ef27`). All AC verified on Python 3.12.10.
+T0.2 Lint, format and type configuration (S003, branch `task/T0.2-lint-format-types`). All AC
+verified on Python 3.12.10: ruff, format, mypy clean; `local_data` skips with a reason when
+`tests/reference/` is absent.
 
 ## Tasks not started
 
-All of `ROUTE.md` except T0.1: T0.2–T0.4, T1.1–T1.6, T2.1–T2.7, T3.1–T3.3, T4.1–T4.6, T5.1–T5.2,
+All of `ROUTE.md` except T0.1–T0.2: T0.3–T0.4, T1.1–T1.6, T2.1–T2.7, T3.1–T3.3, T4.1–T4.6, T5.1–T5.2,
 T6.1–T6.3, T7.1–T7.3, T8.1–T8.2, T9.1–T9.2, T10.1–T10.2, T11.1–T11.3, T12.1–T12.3,
 T13.1–T13.4, T14.1–T14.2, T15.1–T15.4, T16.1–T16.4.
 
@@ -69,4 +72,5 @@ marking a stage done in `ROUTE.md` needs no authorisation; no "normalise to area
 
 ## Known defects
 
-None.
+- `pyproject.toml` line 9: `readme = "CLAUDE.md"` (from T0.1). Should be `README.md`, which
+  T0.3 creates. Fix when T0.3 lands, with Rob's approval.

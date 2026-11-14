@@ -27,7 +27,13 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-markers = ["local_data: needs unpublished files in tests/reference/"]
+markers = [
+    "local_data: needs unpublished files in tests/reference/ (skipped when absent)",
+    "gui: needs the Qt widgets (offscreen platform)",
+    "integration: chains through core/ and render/ without a GUI",
+    "corpus: runs the public test corpus in tests/corpus/",
+    "e2e: scripted user journeys through the real interface",
+]
 
 [tool.ruff]
 line-length = 88
@@ -38,5 +44,9 @@ select = ["E", "F", "I", "UP", "B"]
 
 [tool.mypy]
 python_version = "3.12"
-strict = true
 mypy_path = "src"
+
+# Strict typing is required in core/ only (CLAUDE.md section 7 and T0.2).
+[[tool.mypy.overrides]]
+module = ["graphing.core", "graphing.core.*"]
+strict = true
