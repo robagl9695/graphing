@@ -1,0 +1,14 @@
+# Not published (CLAUDE.md section 9)
+LOGBOOK.md
+brainstorming/
+build/
+tests/reference/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/

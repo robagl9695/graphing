@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "graphing"
+version = "0.0.1"
+description = "Plot and analyse experimental and theoretical UV-Vis and IR spectra."
+readme = "CLAUDE.md"
+requires-python = ">=3.12"
+license = "GPL-3.0-or-later"
+dependencies = [
+    "PySide6",
+    "matplotlib",
+    "numpy",
+    "scipy",
+    "openpyxl",
+    "odfpy",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-qt", "ruff", "mypy"]
+structure = ["rdkit"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["local_data: needs unpublished files in tests/reference/"]
+
+[tool.ruff]
+line-length = 88
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = "src"
