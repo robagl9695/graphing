@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "graphing"
 version = "0.0.1"
 description = "Plot and analyse experimental and theoretical UV-Vis and IR spectra."
-readme = "CLAUDE.md"
+readme = "README.md"
 requires-python = ">=3.12"
 license = "GPL-3.0-or-later"
 dependencies = [
