@@ -3,13 +3,12 @@
 > Read at the start of every session, after `CLAUDE.md`. Maintained without prior
 > approval; every change is reported.
 
-Last updated: 2026-11-15T00:00-06:00 · Session S004
+Last updated: 2026-11-15T00:00-06:00 · Session S005
 
 ## Next action
 
-**E0 gate check, then T1.1** (see `ROUTE.md`). T0.1–T0.4 are done; before E0 is marked
-done, the gate ("a fresh clone installs, lints and tests green on the three systems") and
-the regression cycle (§4.2) must be confirmed with Rob. Present the plan, wait for approval.
+**T1.1** (Architecture specification, see `ROUTE.md`; check its model first). E0 is closed
+(gate verified 2026-11-15, tag `v0.0.1`). Present the plan to Rob, wait for approval.
 
 The four governance files were approved by Rob and written to the repository root on
 2026-11-14. Planning (S001) is closed; the project is ready for Claude Code.

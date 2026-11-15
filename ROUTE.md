@@ -31,7 +31,7 @@ checklist.
 
 | Stage | Content | Version at gate | Status |
 |---|---|---|---|
-| E0 | Foundation | 0.0.1 | not started |
+| E0 | Foundation | 0.0.1 | done (2026-11-15) |
 | E1 | Core model, units, transforms | — | not started |
 | E2 | Readers and parsers | — | not started |
 | E3 | Theoretical spectrum engine | 0.1.0 | not started |
