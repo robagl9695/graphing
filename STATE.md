@@ -3,13 +3,13 @@
 > Read at the start of every session, after `CLAUDE.md`. Maintained without prior
 > approval; every change is reported.
 
-Last updated: 2026-11-14T17:30-06:00 · Session S003
+Last updated: 2026-11-15T00:00-06:00 · Session S004
 
 ## Next action
 
-**T0.4** (CI, see `ROUTE.md`, model per its block). D-02 no longer blocks it
-(D-20261114-11), but its `ROUTE.md` dependency line still names D-02: change proposed,
-waiting for Rob's authorisation (R3). Present the plan to Rob, wait for approval.
+**E0 gate check, then T1.1** (see `ROUTE.md`). T0.1–T0.4 are done; before E0 is marked
+done, the gate ("a fresh clone installs, lints and tests green on the three systems") and
+the regression cycle (§4.2) must be confirmed with Rob. Present the plan, wait for approval.
 
 The four governance files were approved by Rob and written to the repository root on
 2026-11-14. Planning (S001) is closed; the project is ready for Claude Code.
@@ -34,10 +34,13 @@ T0.2 Lint, format and type configuration (S003, commit `557b251`). All AC verifi
 absent.
 T0.3 Project documents (S003, commit `7c79e7e`). `LICENSE` verified against the official GPL-3.0
 hash; README, CHANGELOG and CONTRIBUTING reviewed by Rob and merged.
+T0.4 Continuous integration (S004, PR #1, merged as `2fe60e4`). AC1: CI green on ubuntu,
+windows and macos on the PR and on `main`. AC2: deliberate failure on PR #2 turned all three
+red; PR closed unmerged, branch deleted. Runs: see `LOGBOOK.md`.
 
 ## Tasks not started
 
-All of `ROUTE.md` except T0.1–T0.3: T0.4, T1.1–T1.6, T2.1–T2.7, T3.1–T3.3, T4.1–T4.6, T5.1–T5.2,
+All of `ROUTE.md` except T0.1–T0.4: T1.1–T1.6, T2.1–T2.7, T3.1–T3.3, T4.1–T4.6, T5.1–T5.2,
 T6.1–T6.3, T7.1–T7.3, T8.1–T8.2, T9.1–T9.2, T10.1–T10.2, T11.1–T11.3, T12.1–T12.3,
 T13.1–T13.4, T14.1–T14.2, T15.1–T15.4, T16.1–T16.4.
 
