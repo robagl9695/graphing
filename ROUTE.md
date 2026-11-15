@@ -99,7 +99,7 @@ time. Recommended order: E5, E6, E7, E8, E9, E11, E10, E12.
 - **Tests:** manual check by Rob.
 
 ### T0.4 — Continuous integration
-- **Model:** S · **Dep:** T0.2, open decision D-02
+- **Model:** S · **Dep:** T0.2
 - **Objective:** GitHub Actions workflow: lint, type check and tests on Windows,
   macOS and Linux, Python 3.12, Qt offscreen.
 - **AC:** (1) workflow green on the three systems on `main`. (2) A deliberately
@@ -683,7 +683,7 @@ concentration.
 
 ### T16.4 — Release 1.0.0
 - **Model:** S · **Dep:** all
-- **AC:** open decisions D-01 and D-02 closed; CHANGELOG complete; installers
+- **AC:** open decision D-01 closed and D-02 reviewed (D-20261114-11); CHANGELOG complete; installers
   published; manual in three languages attached.
 
 ---

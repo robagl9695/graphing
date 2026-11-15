@@ -15,3 +15,5 @@ project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   pytest markers, and skipping of `local_data` tests when their data is absent. (T0.2)
 - Project documents: `LICENSE` (GPL-3.0), `README.md`, `CHANGELOG.md` and
   `CONTRIBUTING.md`. (T0.3)
+- Continuous integration: GitHub Actions workflow running ruff, mypy and pytest on
+  Linux, Windows and macOS with Python 3.12. (T0.4)

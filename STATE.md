@@ -7,9 +7,9 @@ Last updated: 2026-11-14T17:30-06:00 · Session S003
 
 ## Next action
 
-Rob's manual check of **T0.3** on branch `task/T0.3-project-documents` (criteria 1 and 2 in
-`ROUTE.md`). When it passes, merge to `main`. Then **T0.4** (CI), which is blocked for
-pushing by D-02; the workflow file can be written locally.
+**T0.4** (CI, see `ROUTE.md`, model per its block). D-02 no longer blocks it
+(D-20261114-11), but its `ROUTE.md` dependency line still names D-02: change proposed,
+waiting for Rob's authorisation (R3). Present the plan to Rob, wait for approval.
 
 The four governance files were approved by Rob and written to the repository root on
 2026-11-14. Planning (S001) is closed; the project is ready for Claude Code.
@@ -24,15 +24,16 @@ The four governance files were approved by Rob and written to the repository roo
 
 ## Tasks in progress
 
-T0.3 Project documents (S003, branch `task/T0.3-project-documents`). Automated checks pass;
-waiting for Rob's manual review of `LICENSE`, `README.md`, `CHANGELOG.md` and `CONTRIBUTING.md`.
+None.
 
 ## Tasks done
 
 T0.1 Repository scaffold (S002, commits `049f7a7`, `197ef27`). All AC verified on Python 3.12.10.
-T0.2 Lint, format and type configuration (S003, branch `task/T0.2-lint-format-types`). All AC
-verified on Python 3.12.10: ruff, format, mypy clean; `local_data` skips with a reason when
-`tests/reference/` is absent.
+T0.2 Lint, format and type configuration (S003, commit `557b251`). All AC verified on Python
+3.12.10: ruff, format, mypy clean; `local_data` skips with a reason when `tests/reference/` is
+absent.
+T0.3 Project documents (S003, commit `7c79e7e`). `LICENSE` verified against the official GPL-3.0
+hash; README, CHANGELOG and CONTRIBUTING reviewed by Rob and merged.
 
 ## Tasks not started
 
@@ -45,7 +46,7 @@ T13.1–T13.4, T14.1–T14.2, T15.1–T15.4, T16.1–T16.4.
 | ID | Decision | Owner | Blocks |
 |---|---|---|---|
 | D-01 | Name of the app and of the package. Ideas in `notes/name-ideas.md`. Working name `graphing`. | Rob and group | T16.4 (and renaming gets costlier after E4) |
-| D-02 | UCR Oficina Jurídica: who owns software written by staff, and may it be released under GPL-3.0-or-later, including code derived from `qclab-utilities`? The PI does not know. The first public push waits for this answer; all other work proceeds locally. | Rob | T0.4 |
+| D-02 | UCR Oficina Jurídica: who owns software written by staff, and may it be released under GPL-3.0-or-later, including code derived from `qclab-utilities`? The PI does not know. **Pending, not blocking** (D-20261114-11): Rob uses no UCR resources (no UCR-paid tools, no paid research time). It becomes blocking as soon as any UCR resource is used. | Rob | nothing, for now |
 | D-05 | Sources for the IR guide. Available: Wade 8th ed. (Appendix 2A chart, 2B table; text layer present), Vogel 5th ed. and Nakamoto 4th ed. (scanned, need OCR). Specialised references (Silverstein, Pretsch, Socrates) still to be found. | Rob | T8.1 |
 
 Closed on 2026-11-14 (see `LOGBOOK.md`): licence for texts and data is CC BY-SA 4.0;
