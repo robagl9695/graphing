@@ -4,7 +4,7 @@
 > `ROUTE.md` and `LOGBOOK.md` are read on demand only (see §2).
 > This file overrides any default assumption.
 
-Last revised: 2026-11-14 · Working name of the app: `graphing` (final name: open decision D-01)
+Last revised: 2026-11-15 · Working name of the app: `graphing` (final name: open decision D-01)
 
 ---
 
@@ -215,24 +215,30 @@ Hard rules:
 
 ```
 Project
-└── Canvas            one figure; holds a grid of panels
-    └── Panel         one set of axes
-        ├── x axis    quantity, unit, transform, limits   (breaks: reserved, v1.1)
-        ├── y axis (left), optional y axis (right)
-        ├── Layer…    one spectrum each, assigned to one y axis
-        └── Inset…    child panels
+└── Canvas            one figure; a proportional grid (spans, nesting) of panels
+    └── Panel         one plot
+        ├── x axis    quantity, unit, limits, inverted, secondary x axis
+        │             (breaks: reserved, v1.1)
+        ├── y axis (left), optional y axis (right); each with its layer arrangement
+        ├── Layer…    one series each, drawn against the left or right y axis
+        └── Inset…    zoom inset (live view of the host) or free inset (own panel)
 ```
 
-- A **Spectrum** has a technique (UV-Vis or IR) and an origin (theoretical or
+Full specification: `docs/architecture.md`. Terms: `docs/glossary.md`.
+
+- The base data type is a generic x–y **Series** (D-20261115-01). A **Spectrum**
+  specialises it with a technique (UV-Vis or IR) and an origin (theoretical or
   experimental). **The user declares both; the app never guesses and never warns.**
 - A theoretical spectrum stores its sticks plus the broadening parameters (line
   shape, FWHM, frequency scale factor). The curve is always recomputed from them.
 - **Inheritance (ggplot2 rule):** the first layer of a panel sets the x and y
   quantities and units. Every layer added later is converted to them. Changing an
   axis from its title changes it for all layers of that panel.
-- **Normalisation is computed per layer**, according to the y mode of the axis.
-- Y modes of an axis: `overlap`, `normalised overlap`, `stacked` (offset per layer).
-  `stacked` may be combined with normalisation.
+- **Normalisation is computed per layer**, according to the layer arrangement of the axis.
+- Layer arrangement of a y axis: `overlap`, `normalised overlap`, `stacked` (gap
+  per axis, overridable per layer). `stacked` may be combined with normalisation.
+- Layers with incompatible y (different technique or quantity) share an axis only
+  normalised, or go to the other side of a double y axis.
 - A layer pasted into another canvas is an independent copy.
 - Combination rules: `stacked` excludes a second y axis; an inset cannot contain an
   inset; subplots combine with everything.
@@ -247,6 +253,8 @@ start so that adding them changes no existing interface.
 |---|---|
 | **v1.0** | Readers txt/csv/xlsx/ods · ORCA and Turbomole parsers · Gaussian, Lorentzian and Voigt broadening · frequency scale factor · unit conversion on x · normalisation, levelling, T↔A, log and inverse on y · zoom, pan, crop in x and y · peak picking (auto, manual, label thinning) · overlap, normalised overlap, stacking · double y axis, subplots, inset · IR range guide · colour (XYZ, RGB, hex, with concentration) · structure image and SMILES · save/open project · export figure and data · es/en/pt interface, help and manual · installers for Windows, macOS, Linux |
 | **v1.1** | Axis gap · plot digitizer · Gaussian and MOPAC parsers |
+| **v1.x (possible)** | Plotting generic x–y data (the model already supports it) |
+| **Later** | More features, taking [InstaNANO](https://instanano.com/) as a reference for what users of paid plotting services expect |
 | **Out** | Baseline editing or fitting (only constant levelling exists) · proprietary instrument formats · 3D structures |
 
 ---
