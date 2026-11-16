@@ -10,8 +10,7 @@ Last updated: 2026-11-15T22:30-06:00 · Session S006 (closing)
 **T1.2** (Quantities, units and x conversions; model **Sonnet**). Follow
 `docs/architecture.md` §3.1 and §3.5. Present the plan to Rob, wait for approval.
 
-Pending in parallel: Rob's R3 authorisation of the CLAUDE.md §6.3/§6.4 diff proposed in
-S006 (generic `Series` base, two inset kinds, secondary x axis, layer arrangement, grid).
+CLAUDE.md §6.3/§6.4 revised with Rob's R3 authorisation (S006, commit `fa187fe`).
 
 ## Work priority
 
