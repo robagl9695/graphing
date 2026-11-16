@@ -7,6 +7,11 @@ project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Architecture specification (`docs/architecture.md`) and glossary of terms
+  (`docs/glossary.md`). (T1.1)
+
 ## [0.0.1] - 2026-11-15
 
 ### Added
