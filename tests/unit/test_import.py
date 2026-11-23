@@ -5,4 +5,4 @@ import graphing
 
 
 def test_version() -> None:
-    assert graphing.__version__ == "0.0.1"
+    assert graphing.__version__ == "0.1.0"

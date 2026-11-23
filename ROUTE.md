@@ -32,9 +32,9 @@ to `docs/acceptance-checklist.md`. A version tag also needs the acceptance check
 | Stage | Content | Version at gate | Status |
 |---|---|---|---|
 | E0 | Foundation | 0.0.1 | done (2026-11-15) |
-| E1 | Core model, units, transforms | — | not started |
+| E1 | Core model, units, transforms | — | done (2026-11-22) |
 | E2 | Readers and parsers | — | open: only T2.1 AC4 left (real instrument exports, `STATE.md`) |
-| E3 | Theoretical spectrum engine | 0.1.0 | not started |
+| E3 | Theoretical spectrum engine | 0.1.0 | done (2026-11-22) |
 | E4 | GUI: single plot | 0.2.0 | not started |
 | E5 | Axis interaction | — | not started |
 | E6 | Peaks | 0.3.0 | not started |

@@ -10,7 +10,7 @@ an orientative guide of typical IR ranges.
 
 ## Status
 
-**In development. There is no public release yet.** The current version is `0.0.1`.
+**In development. There is no public release yet.** The current version is `0.1.0`.
 The repository holds the project foundation (layout, configuration, test set-up); the
 interface and the spectral calculations are not yet built.
 
