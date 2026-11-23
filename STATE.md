@@ -7,13 +7,7 @@ Last updated: 2026-11-22 · Session S019
 
 ## Next action
 
-**Close E3 (gate 0.1.0): waiting for Rob.** The E3 integration cycle is green (S019): 486 passed, 2 skipped; corpus 33/33, the 5 program outputs broadened to ε; `tests/integration/test_theoretical_chain.py`; `docs/test-scenarios.md`. Rob decides:
-(1) close E3 and mark E1 done (verified);
-(2) E2 stays open; it depends only on T2.1 AC4 (real instrument exports from Kenneth); marked so in `ROUTE.md` (Rob, S019);
-(3) the 0.1.0 bump, the CHANGELOG release and the tag `v0.1.0`;
-(4) the push and a CI run: done (S019); `main` pushed at `a047ff4`, CI run 45087873338 green on Ubuntu, macOS and Windows;
-(5) X-04 fixed (S019, see known defects).
-Then T4.1.
+**T4.1.** Stage E3 closed at `v0.1.0` (S019, Rob): E1 and E3 done in the `ROUTE.md` progress table; release commit `43e94f3`, tag `v0.1.0` pushed, CI run 45110411427 green on Ubuntu, macOS and Windows. E2 stays open; it depends only on T2.1 AC4 (real instrument exports from Kenneth). Never push the local branch `backup/pre-X-04` (X-04).
 
 Note: `ROUTE.md` T4.6 now lists the shift (authorised by Rob, S017); its "?" help must
 cover shift and scale factor. The manual must say that scale factor and
