@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "kind": "synthetic",
+  "source": {
+    "program_or_instrument": "Turbomole, artificial output, 7.x layout (not real)",
+    "version": "7.x (layout only)",
+    "molecule": "none (artificial states)",
+    "producer": "QCLab, graphing project (layout of a real exspectrum header)"
+  },
+  "publishable": {
+    "confirmed": true,
+    "by": "Rob",
+    "date": "2026-11-17"
+  },
+  "reader": "turbomole-exspectrum",
+  "expect": {
+    "error": {
+      "stage": "parse",
+      "type": "MalformedBlock"
+    }
+  }
+}

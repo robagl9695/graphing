@@ -24,8 +24,8 @@ A stage is approved only when: (1) all its tasks are approved; (2) its gate belo
 passes; (3) the **integration cycle** of `CLAUDE.md` §4.2 is green — regression,
 integration tests, corpus run, end-to-end journeys, and from E15 the installed-app
 smoke test. Each stage adds its own integration tests and at least one end-to-end
-journey (from E4) to `docs/test-scenarios.md`. A version tag also needs Rob's manual
-checklist.
+journey (from E4) to `docs/test-scenarios.md` and, from E4, its user-visible functions
+to `docs/acceptance-checklist.md`. A version tag also needs the acceptance checklist.
 
 ## Progress (updated at stage closure)
 
@@ -33,7 +33,7 @@ checklist.
 |---|---|---|---|
 | E0 | Foundation | 0.0.1 | done (2026-11-15) |
 | E1 | Core model, units, transforms | — | not started |
-| E2 | Readers and parsers | — | not started |
+| E2 | Readers and parsers | — | open: only T2.1 AC4 left (real instrument exports, `STATE.md`) |
 | E3 | Theoretical spectrum engine | 0.1.0 | not started |
 | E4 | GUI: single plot | 0.2.0 | not started |
 | E5 | Axis interaction | — | not started |
@@ -139,7 +139,9 @@ time. Recommended order: E5, E6, E7, E8, E9, E11, E10, E12.
   x unit, y kind, metadata). Y kinds: absorbance, transmittance (%), molar
   absorptivity, intensity (arbitrary), oscillator strength (sticks), IR intensity
   (km/mol, sticks).
-- **AC:** (1) construction validates lengths, finiteness, monotonic x. (2) raw
+- **AC:** (1) construction validates lengths and finiteness; curves need strictly
+  ascending x; sticks keep every line in file order, repeated positions allowed
+  (D-20261118-02). (2) raw
   arrays cannot be mutated from outside. (3) sticks and curves are distinct types.
 - **Tests:** validation errors; immutability; equality.
 
@@ -245,7 +247,8 @@ time. Recommended order: E5, E6, E7, E8, E9, E11, E10, E12.
   from content beyond the file type.
 - **AC:** (1) every format loads through it. (2) declaring a wrong origin does not
   raise or warn; the data is read as declared. (3) list of supported formats is
-  generated from the registered readers.
+  generated from the registered readers. (4) stick spectra keep every line as printed,
+  in file order, each with its label (mode or state number).
 - **Tests:** one integration test per format in `tests/integration/`; first full
   corpus run.
 
@@ -267,24 +270,51 @@ time. Recommended order: E5, E6, E7, E8, E9, E11, E10, E12.
 ### T3.2 — Broadening
 - **Model:** O · **Dep:** T3.1, T2.5, T2.6
 - **Objective:** `core/broadening.py`: sticks → curve. Broadening is done in an
-  energy-linear variable (cm⁻¹ or eV), then converted for display. UV-Vis:
-  oscillator strength → molar absorptivity. IR: km/mol → molar absorptivity. Grid
-  chosen from the FWHM. Constants taken from `qclab-utilities` and re-derived in the
-  docstring with their source.
-- **AC:** (1) integrated absorptivity of one stick reproduces its oscillator
-  strength (UV-Vis) or intensity (IR) within 1e-4 relative. (2) the curve is the same
-  whichever display unit is chosen afterwards. (3) curves for the corpus files agree with
-  `absspectra`/`irspectra` output within 1e-6 relative.
-  (4) derivation of both conversion constants is written in `docs/theory.md`.
-- **Tests:** single-stick integrals; unit invariance; comparison on the corpus.
+  energy-linear variable (cm⁻¹ or eV), then converted for display. The broadened
+  curve keeps the y quantity of the sticks (oscillator strength or km/mol)
+  (D-07); conversions to other quantities are T3.4. Grid chosen from the FWHM.
+- **AC:** (1) the integral of the broadened curve of one stick reproduces its height
+  within 1e-4 relative. (2) the curve is computed once, in the broadening unit;
+  changing the display unit converts each x value and keeps its y value, so converting
+  the displayed x back to the broadening unit recovers the same points (x within 1e-12
+  relative, y identical) (D-20261122-02). (3) two lines at the same position broaden to the same curve as one line
+  of the summed height (1e-12 relative); the curve does not depend on the view.
+- **Tests:** single-stick integrals; unit invariance.
 
-### T3.3 — Frequency scale factor
+### T3.3 — Scale factor and shift of theoretical positions (D-20261122-07)
 - **Model:** S · **Dep:** T3.2
-- **Objective:** multiplicative factor on theoretical wavenumbers, default 1.0,
-  stored as a parameter.
-- **AC:** (1) factor 1.0 is a no-op to machine precision. (2) factor is applied to
-  stick positions before broadening. (3) non-positive factor raises a named error.
+- **Objective:** two optional corrections of theoretical line positions, both stored
+  as `Broadening` parameters and valid for IR and UV-Vis: a multiplicative scale
+  factor (default 1.0) and an additive shift (default 0.0), `x' = factor·x + shift`,
+  in the broadening unit (cm⁻¹ or eV; UV-Vis sticks in nm are converted first). The
+  IR scale factor is standard practice; for UV-Vis both are user calibrations
+  against experiment, with no universal value. Lines whose corrected position is not
+  above zero are neither broadened nor drawn, as for imaginary modes.
+- **AC:** (1) factor 1.0 and shift 0.0 are a no-op to machine precision. (2) factor
+  and shift are applied to stick positions before broadening, and the drawn sticks
+  follow the curve. (3) non-positive or non-finite factor, and non-finite shift,
+  raise a named error. (4) lines at or below zero before the correction are not
+  moved by the shift.
 - **Tests:** one per AC.
+
+### T3.4 — Absorptivity and Beer–Lambert conversions
+- **Model:** O · **Dep:** T3.2, T1.4
+- **Objective:** optional y transforms the user chooses (D-07): oscillator strength
+  → molar absorptivity; km/mol → molar absorptivity (D-20261117-01); molar
+  absorptivity → absorbance by Beer–Lambert, asking path length b and
+  concentration c; experimental absorbance → molar absorptivity, asking b and c.
+  Absorbance → %T uses the existing transform. No direct km/mol → A or %T.
+  Constants taken from `qclab-utilities` and re-derived in the docstring with their
+  source.
+- **AC:** (1) integrated absorptivity of one stick reproduces its oscillator
+  strength (UV-Vis) or intensity (IR) within 1e-4 relative. (2) A → ε → A with the
+  same b and c is the identity within 1e-12 relative; non-positive b or c raises a
+  named error. (3) curves for the corpus files agree within 1e-6 relative with
+  `irspectra` output, and with `absspectra` output multiplied by
+  K_CODATA / 2.315115e8 (qclab's f → ε constant differs from the CODATA 2018 value
+  by 1.02e-4; D-20261122-09). (4) derivation of the conversion constants is written
+  in `docs/theory.md`.
+- **Tests:** one per AC; comparison on the corpus.
 
 ---
 
@@ -297,7 +327,8 @@ frozen-free run from source on Windows and Linux.
 - **Model:** O+R · **Dep:** T1.1
 - **Objective:** `docs/ui-spec.md`: main window layout (task bar, canvas list,
   plot area, side panel), import flow screen by screen, where each tool lives,
-  keyboard and mouse actions, wireframes.
+  keyboard and mouse actions, wireframes. Also creates `docs/acceptance-checklist.md`
+  (in Spanish, `CLAUDE.md` R7 and §4.2) with the items of the import flow.
 - **AC:** (1) every v1.0 function in `CLAUDE.md` §6.4 has a place in the interface.
   (2) the import flow takes at most three screens. (3) Rob approves.
 - **Tests:** none (document).
@@ -306,10 +337,17 @@ frozen-free run from source on Windows and Linux.
 - **Model:** O · **Dep:** T1.6
 - **Objective:** `render/`: model → Matplotlib figure for one panel. Conventions:
   wavenumber axis decreasing to the right for IR; EQ palette; sticks drawn as
-  vertical lines when requested.
+  vertical lines when requested; sticks summed for display by
+  `core.sticks.group_sticks`: same printed position always; unresolved lines within
+  the display tolerance (≈0.5 mm on the figure) unless "sum sticks" is off;
+  recomputed when the view changes; a summed stick has its tip in a lighter tone of
+  the layer colour (D-20261118-03, -04, -05). Default x view of a stick layer: the
+  outermost lines ± 5 FWHM, with the FWHM taken in the displayed unit (in nm,
+  Δλ = hc/(E − ΔE/2) − hc/(E + ΔE/2); if ΔE/2 ≥ E, half the energy of that line)
+  (D-20261122-01).
 - **AC:** (1) rendering is a pure function of the model (same model, same figure).
   (2) no Qt import. (3) image-comparison tests pass for curve, sticks, curve+sticks,
-  IR transmittance.
+  IR transmittance, a degenerate pair, and an unresolved pair at two zoom levels.
 - **Tests:** `pytest-mpl`-style image comparisons with tolerance; purity test.
 
 ### T4.3 — Application shell
@@ -341,8 +379,9 @@ frozen-free run from source on Windows and Linux.
 
 ### T4.6 — Theoretical parameters panel
 - **Model:** S · **Dep:** T4.5, T4.4, T3.3
-- **Objective:** line shape, FWHM (with unit), scale factor, show sticks; the plot
-  updates live.
+- **Objective:** line shape, FWHM (with unit), scale factor, shift (in cm⁻¹ or eV,
+  as set by T3.3), show sticks; the "sum sticks" control (it turns off only the summing of unresolved lines), with its
+  "?" entry; the plot updates live.
 - **AC:** (1) each control changes the model parameter and re-renders. (2) each
   control has its "?" entry. (3) invalid values are refused with a message.
 - **Tests:** `pytest-qt` per control; help completeness.
@@ -393,6 +432,8 @@ frozen-free run from source on Windows and Linux.
   click to add a peak (snap to the local extremum, optional); click to remove.
 - **AC:** (1) readout shows x and y in the current units. (2) add and remove are
   undoable. (3) manual and automatic peaks coexist and are distinguishable.
+  (4) clicking a summed stick shows "sum of g degenerate lines" or "n lines not
+  resolved at this zoom", with the range and the members.
 - **Tests:** `pytest-qt` click tests.
 
 ### T6.3 — Label thinning
@@ -532,10 +573,12 @@ concentration.
 
 ### T11.3 — Data export
 - **Model:** S · **Dep:** T6.1, T3.2
-- **Objective:** export processed spectra and the peak table to CSV, with a header
-  recording the transforms and parameters applied.
+- **Objective:** export processed spectra, the stick lines of theoretical layers and
+  the peak table to CSV, with a header recording the transforms and parameters applied.
 - **AC:** (1) exported CSV reloads through T2.1 to the same numbers. (2) the header
-  lists every applied transform.
+  lists every applied transform. (3) stick export writes every original line in file
+  order with its label, its printed position and its position after the scale
+  factor; never the summed sticks.
 - **Tests:** export → reload equality.
 
 ---
@@ -644,7 +687,7 @@ concentration.
   choice at install where the system allows.
 - **AC:** (1) install, start, uninstall work on a clean machine of each system.
   (2) file association for the project file works.
-- **Tests:** manual checklist per system (T15.4).
+- **Tests:** acceptance checklist per system (T15.4).
 
 ### T15.3 — Release workflow
 - **Model:** S · **Dep:** T15.2
@@ -655,7 +698,7 @@ concentration.
 
 ### T15.4 — Tests on real machines
 - **Model:** Rob (Windows, Linux, borrowed macOS) · **Dep:** T15.2
-- **AC:** the manual checklist passes on the three systems; results logged.
+- **AC:** the acceptance checklist passes on the three systems; results logged.
 
 ---
 
@@ -682,9 +725,27 @@ concentration.
 - **AC:** each dataset has a citation and a licence that allows redistribution.
 
 ### T16.4 — Release 1.0.0
-- **Model:** S · **Dep:** all
+- **Model:** S · **Dep:** all, including T16.6
 - **AC:** open decision D-01 closed and D-02 reviewed (D-20261114-11); CHANGELOG complete; installers
   published; manual in three languages attached.
+
+### T16.5 — Acceptance run
+- **Model:** Rob and group (testing) + O (support) · **Dep:** E15
+- **Objective:** go through `docs/acceptance-checklist.md` in full, as users, on the
+  installed app.
+- **AC:** (1) every item passes on Windows, macOS and Linux. (2) results are logged.
+  (3) every failure is recorded as a defect, fixed on a `fix/` branch, and the run is
+  repeated.
+- **Tests:** the checklist itself.
+
+### T16.6 — Beta
+- **Model:** Rob and testers + O (triage) · **Dep:** T16.5, D-08
+- **Objective:** tag `1.0.0-beta.N`, give the installers to a small group chosen by
+  Rob, collect their bug reports, fix them on `fix/` branches, and release a new
+  `beta.N` when needed.
+- **AC:** (1) the test period set by Rob ends with no open blocking defect.
+  (2) reports and fixes are logged.
+- **Tests:** the testers' use; regression and acceptance items of every fix.
 
 ---
 

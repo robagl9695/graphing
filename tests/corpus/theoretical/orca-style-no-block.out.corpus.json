@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "kind": "synthetic",
+  "source": {
+    "program_or_instrument": "ORCA, artificial output, 4.2.1 layout (not real)",
+    "version": "4.2.1 (layout only)",
+    "molecule": "none (artificial transitions)",
+    "producer": "QCLab, graphing project (derived from synthetic-3bands.out)"
+  },
+  "publishable": {
+    "confirmed": true,
+    "by": "Rob",
+    "date": "2026-11-17"
+  },
+  "reader": "orca",
+  "expect": {
+    "error": {
+      "stage": "parse",
+      "type": "MissingBlock"
+    }
+  }
+}

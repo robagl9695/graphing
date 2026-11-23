@@ -1,0 +1,7 @@
+Artificial ORCA-4.2.1-style output for absspectra examples.
+
+Not a real calculation. Three transitions placed at round wavenumbers with
+equal oscillator strength, so a broadened spectrum must show three bands at
+20000 / 25000 / 30000 cm-1 (500.0 / 400.0 / 333.3 nm) of equal peak height.
+
+                no spectrum was requested

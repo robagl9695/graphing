@@ -1,8 +1,10 @@
 # Not published (CLAUDE.md section 9)
 LOGBOOK.md
+logbook-files/
 brainstorming/
 build/
 tests/reference/
+literature/
 
 # Python
 __pycache__/

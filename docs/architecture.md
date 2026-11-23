@@ -97,13 +97,18 @@ Two distinct types (T1.3 AC3), same fields:
 
 | Field | Type | Invariant |
 |---|---|---|
-| `x` | read-only float array | finite, strictly ascending |
+| `x` | read-only float array | finite; curve: strictly ascending; sticks: any order, repeats allowed |
 | `y` | read-only float array | finite, same length as `x`, length ≥ 1 (curve: ≥ 2) |
 | `x_quantity`, `x_unit` | `Quantity`, `Unit` | unit belongs to quantity |
 | `y_quantity`, `y_unit` | `Quantity`, `Unit` | unit belongs to quantity; never `NORMALISED_INTENSITY` |
+| `labels` (sticks only) | `tuple[str, ...] \| None` | one per line (mode or state number); `None` = lines numbered 1…n in file order |
 
 Readers that receive x descending (common in IR exports) reverse both arrays before
-construction, keeping x–y pairs together.
+construction of a curve, keeping x–y pairs together.
+
+**Stick lines are kept exactly as the program printed them** (D-20261118-02): every
+line, in file order, with its label, repeated positions included. Equality and hash
+include the order and the labels. Degeneracy is never stored: it is a view (§8.1).
 
 ### 3.3 `Series` and `Spectrum`
 
@@ -130,23 +135,29 @@ for a generic `Series` (§6).
 ```
 Broadening
   line_shape: LineShape       GAUSSIAN | LORENTZIAN | VOIGT
-  fwhm: float                 > 0
-  fwhm_unit: Unit             an x unit of the convertible family
-  scale_factor: float         > 0, default 1.0 (frequency scale factor)
+  fwhm: float                 > 0; for VOIGT, the Gaussian width
+  fwhm_unit: Unit             cm⁻¹ or eV (linear in energy; nm is refused, T3.2)
+  scale_factor: float         > 0, default 1.0 (multiplies positions, T3.3)
+  shift: float                finite, default 0.0, in fwhm_unit (added after scaling)
   step: float | None          > 0, in fwhm_unit; None = automatic (default)
+  fwhm_lorentzian: float|None > 0, in fwhm_unit; required for VOIGT, None otherwise
 ```
 
-Voigt needs one more shape parameter; it is added to this class in E3 with a default,
-so no existing call changes.
+Voigt's second width was added in T3.2 with a default of `None`, so no existing call
+changes (option A, Rob S015). A FWHM in nm is not accepted: a constant width in nm is
+not a constant width in energy (Rob S016).
 
 `step` is the spacing of the x grid on which the broadened curve is computed. The
-automatic value is a fixed fraction of the FWHM (the fraction is set in E3). Any step
+automatic value is the profile FWHM / 50 (Rob S016; for Voigt, the profile FWHM is
+`voigt_fwhm`). Any step
 much smaller than the FWHM gives a curve that looks the same on screen, so the
 interface keeps `step` out of the way. Where the user will want it is **exporting the
 broadened curve as data** (E11): the number of rows in the exported file depends on
 it, so the export dialog shows the step in use and lets the user change it there.
-The grid range (the sticks ± a multiple of the FWHM) is chosen at evaluation time
-(§8) and not stored.
+The grid range (the outermost sticks ± 5 profile FWHMs, never reaching zero) is chosen
+at evaluation time (§8) and not stored. A Lorentzian keeps about 94 % of its area
+inside that range; the curve is exact at every grid point, and the range is a display
+choice (Rob S016).
 
 ### 3.5 `Interval`
 
@@ -169,18 +180,23 @@ Conversions within one quantity (none in v1.0) and between wavenumber and energy
 
 ### 3.6 Y transforms
 
-One frozen class per transform (T1.4). Each has an `apply(x, y) -> y` method and a
-short label for the interface.
+One frozen class per transform (T1.4). Each has an `apply(x, y, x_quantity) -> y` method (`x_quantity` tells
+`NormaliseAtX` what the x array measures) and a short label for the interface.
 
 | Class | Parameters | Effect on the y quantity |
 |---|---|---|
 | `TransmittanceToAbsorbance` | — | `TRANSMITTANCE` → `ABSORBANCE` |
 | `AbsorbanceToTransmittance` | — | `ABSORBANCE` → `TRANSMITTANCE` |
-| `Log10` | — | quantity becomes `GENERIC("log10 …")` |
-| `Inverse` | — | quantity becomes `GENERIC("1/…")` |
+| `Log10` | — | quantity becomes `DerivedQuantity("log10", source)` |
+| `Inverse` | — | quantity becomes `DerivedQuantity("inverse", source)` |
 | `Level` | `constant: float` | unchanged |
 | `NormaliseToMax` | — | `NORMALISED_INTENSITY` |
 | `NormaliseAtX` | `x: float`, `quantity`, `unit` | `NORMALISED_INTENSITY` |
+
+A `DerivedQuantity(operation, source)` is equal to another only with the same
+operation and source; free-text `GENERIC` quantities are not in v1.0 (D-20261116-01).
+`core.transforms.apply_transforms` applies a tuple in order to the raw arrays and
+checks the y quantity at every step.
 
 Each layer holds a tuple of these. The **effective y quantity** of a layer is the
 source's y quantity after its transforms; that is what §6 compares.
@@ -193,6 +209,11 @@ source's y quantity after its transforms; that is what §6 compares.
 curve with its sticks (default), the curve alone, or the sticks alone. The broadening
 is kept even while the curve is hidden. Default colours cycle through Rob's palette
 (CLAUDE §7).
+
+Sticks layers also have `sum_sticks` (default `True`, D-20261118-03, -04). It is
+display only and changes no value: when `False`, lines not resolved at the current
+zoom are drawn one by one, even if they overlap; lines with the same position are
+still summed (§8.1). It is a user parameter, so it has a "?" help entry.
 
 ## 4. Containers (mutable)
 
@@ -415,7 +436,7 @@ layer shows. `render/` calls it and draws the result. Steps, in this fixed order
 | # | Step | Applies to | Notes |
 |---|---|---|---|
 | 1 | Read source arrays | all | |
-| 2 | Scale stick positions by `scale_factor` | sticks | |
+| 2 | Correct stick positions: `x' = scale_factor·x + shift`, in `fwhm_unit` | sticks | D-20261122-07. Lines at or below zero before the correction are left alone; lines that end at or below zero are not drawn. In a nm view a constant shift in eV is not constant in nm (manual) |
 | 3 | Broaden onto an x grid | sticks | grid spans the sticks ± a multiple of FWHM; uniform spacing `Broadening.step` in `fwhm_unit` |
 | 4 | Crop | all | `Interval` converted to the data's unit; inclusive bounds |
 | 5 | Convert x to the panel's x unit; apply `y_transforms` in order | all | x ascending, x–y pairs kept |
@@ -431,6 +452,57 @@ View limits, inversion, log scale, secondary x axis and breaks are display optio
 Steps 1–5 depend only on the layer and the panel's x unit, so `core/` may cache them
 per layer and invalidate the cache when the layer or the x unit changes. The cache
 is an implementation detail, not part of the model.
+
+For a sticks layer, `LayerValues.sticks` holds the lines after steps 1–6 as
+`(x, y, line_index)`: `line_index` points into the source lines, so a drawn stick can
+name the lines it stands for. The broadened curve is always computed from these raw
+lines (step 3), never from summed sticks, and does not depend on the view.
+
+The sticks go through the same steps as their curve (T3.2, Rob S016; restated in
+D-20261122-08, which replaces D-20261122-05): crop, x conversion, and every y
+transform, so that sticks and curve keep their shape relation. A **linear** transform
+(f → ε, km/mol → ε, ε ↔ A by Beer–Lambert, normalise to maximum, normalise at x)
+gives the same curve whether it acts on the lines before broadening or on the curve
+after, and the sticks are scaled with it: normalisations divide the sticks by the
+curve's divisor, Beer–Lambert multiplies or divides them by b·c, and a conversion to
+ε takes each stick to the maximum of its band alone, K·h·g(0) (`docs/theory.md` §3).
+Step 6 gives the sticks the same divisor and offset as the curve. A **non-linear**
+transform (%T ↔ A, log, inverse, and levelling, which is affine) can only act on the
+broadened curve, because broadening is a sum; it acts on each stick height as on one
+value (from an ε or A stick, this is what its band alone would give at its
+centre). A stick it
+cannot take (log of 0, 1/0) is dropped, and the curve is still shown. Lines at or below zero (imaginary frequencies, recorded in the
+metadata by the reader) are neither broadened nor drawn (Rob S016).
+
+### 8.1 Summed sticks (display step)
+
+Decisions D-20261118-02 to -05. After step 6, `render/` groups the stick lines of a
+layer for drawing with the pure function `core.sticks.group_sticks(x, y,
+line_index, resolution)`, in the displayed x unit:
+
+1. Lines with the same position are always summed, at any zoom and whatever
+   `sum_sticks` says (exact equality survives the scale factor, the shift and the unit
+   conversion: the same operation on equal numbers gives equal numbers).
+2. If `sum_sticks` is on, lines not resolved on the figure are summed too: sorted by
+   position, a group starts at the lowest line not yet grouped and takes every line
+   within `resolution` of it (width-limited, anchored, no chaining; stable under
+   panning). `resolution` is a length on the figure, about 0.5 mm (2 px at 100 dpi),
+   turned into x units from the view limits and the plot width, so an exported figure
+   groups like the screen. Zooming in separates the lines.
+3. Each `StickGroup` holds the position, the summed height, the members
+   (`line_index` values) and whether the group is degenerate (one position) or
+   unresolved. An unresolved group is drawn at the intensity-weighted centroid of its
+   members; if the sum is 0, at the tallest member (ties: first in file order).
+4. A summed stick has its tip, about 1 mm, in a lighter tone of the layer colour; the
+   same mark for both kinds. Selecting it says "sum of g degenerate lines" or "n lines
+   not resolved at this zoom", with the range and the members.
+
+Grouping never feeds back into values: normalisation, stacking, peaks, the project
+file and data export use the raw lines. Exporting stick lines writes every original
+line in file order with its label, its printed position and its position after the
+scale factor and shift.
+
+Prototype on real data (local, unpublished): `logbook-files/S014-X03/`.
 
 ## 9. Combination rules
 
@@ -640,8 +712,15 @@ translatable through the GUI.
 
 `IncompatibleXQuantity`, `StackedWithDualAxis`, `NestedInset`, `CannotNormalise`,
 `EmptySelection`, `NonPositiveValue`, `InvalidInterval`, `GridOverlap`,
-`MissingBroadening`, `RegionInBreak`, `FeatureNotAvailable`.
-T1.2–T1.6 may add errors; each is listed here when added.
+`MissingBroadening`, `RegionInBreak`, `FeatureNotAvailable`, `InvalidData`,
+`InvalidUnit` (added in T1.3), `InvalidTransform`, `DivisionByZero` (added in T1.4). `InvalidInterval` and
+`EmptySelection` are implemented in T1.5. T1.6 implements `StackedWithDualAxis`,
+`NestedInset`, `GridOverlap`, `MissingBroadening`, `RegionInBreak` and
+`FeatureNotAvailable`, and adds `IncompatibleYQuantity` (layers of different y on a
+side that is not normalised), `YChoiceRequired` (a layer that needs the choice of §6
+added without one), `EmptyPanel` (an axis operation on a panel with no layers) and
+`UnknownItem` (a layer, inset or canvas that is not where it was looked for).
+Later tasks may add errors; each is listed here when added.
 
 ## 14. Decisions and discarded alternatives
 
@@ -649,6 +728,8 @@ T1.2–T1.6 may add errors; each is listed here when added.
 |---|---|---|
 | Immutable data, mutable containers | Fully immutable model (every edit builds a new `Project`) | Rob, S006: spectra are edited constantly; one new instance per edit costs memory and complicates the GUI for an undo v1.0 does not need. |
 | Generic `Series` base, `Spectrum` specialises it (D-20261115-01) | Spectrum-only model | Cheap now; changing it after E4 would touch model, renderer and project file. |
+| Stick lines kept as printed; summing is a display view (D-20261118-02 to -05) | Merge degenerate lines in the data; strictly ascending stick x | Rob, S013: the program's lines must be recoverable (export writes them); broadening gives the same curve either way. |
+| Width-limited, anchored grouping with a fixed length on the figure | Relative tolerance (1 %); single-linkage chaining | A relative merge turns carpets of small lines into one unrealistic stick; chaining makes groups grow without bound and jump when panning. |
 | Breaks as one field of `XAxis`, expanded by `render/` | Breaks as several panels in the model | The user sees one plot; arrangement and peaks must not split. Rob's "pieces glued together" idea is exactly what `render/` does. |
 | Compatibility key = technique + quantity | Quantity only | IR and UV-Vis absorbance have different scales (Rob, S006). |
 | Core returns `NeedsYChoice`; GUI asks | Core picks normalisation automatically | The app never guesses (CLAUDE §6.3). |

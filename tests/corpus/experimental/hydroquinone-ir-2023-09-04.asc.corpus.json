@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "kind": "instrument",
+  "source": {
+    "program_or_instrument": "PerkinElmer FT-IR, ASCII export (header: 'PE IR SPECTRUM ... ASCII PEDS 1.60'; MIR, KBr, LiTaO3 detector)",
+    "version": "PEDS 1.60 (from the file header; instrument model not recorded)",
+    "molecule": "hydroquinone",
+    "producer": "R. Gonzalez, Escuela de Quimica, UCR; measured 2023-09-04"
+  },
+  "publishable": {
+    "confirmed": true,
+    "by": "Rob",
+    "date": "2026-11-17"
+  },
+  "reader": "text",
+  "expect": {
+    "table": {
+      "rows": 1801,
+      "columns": 2,
+      "first": [4000.0, 36.652662],
+      "last": [400.0, 36.16169],
+      "header": null
+    },
+    "spectra": {
+      "count": 1,
+      "names": ["Column 2"],
+      "x_reordered": true
+    }
+  },
+  "mapping": {
+    "x_column": 0,
+    "y_columns": [1],
+    "x_quantity": "WAVENUMBER",
+    "x_unit": "CM1",
+    "y_quantity": "TRANSMITTANCE",
+    "technique": "IR",
+    "origin": "EXPERIMENTAL"
+  },
+  "notes": "Real instrument export: ~55 header lines (preamble with single-column and 'a,b' lines), '#DATA' marker, then 'wavenumber<TAB>%T ' rows from 4000 to 400 cm-1 in steps of 2, CRLF line ends, trailing space after the second column, right-padded numbers."
+}

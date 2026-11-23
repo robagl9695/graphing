@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "kind": "synthetic",
+  "source": {
+    "program_or_instrument": "Turbomole, artificial vibspectrum (not real)",
+    "version": "7.x layout only",
+    "molecule": "none (artificial modes)",
+    "producer": "QCLab, qclab-utilities examples"
+  },
+  "publishable": {
+    "confirmed": true,
+    "by": "Rob",
+    "date": "2026-11-17"
+  },
+  "reader": "turbomole-vibspectrum",
+  "expect": {
+    "modes": 14,
+    "ir_active_modes": 8,
+    "first": [
+      -0.0,
+      0.0
+    ],
+    "last": [
+      3018.66,
+      41.9
+    ],
+    "negative_wavenumbers": [
+      -284.71
+    ]
+  }
+}

@@ -4,7 +4,7 @@
 > `ROUTE.md` and `LOGBOOK.md` are read on demand only (see §2).
 > This file overrides any default assumption.
 
-Last revised: 2026-11-15 · Working name of the app: `graphing` (final name: open decision D-01)
+Last revised: 2026-11-18 · Working name of the app: `graphing` (final name: open decision D-01)
 
 ---
 
@@ -59,12 +59,12 @@ never load either file whole.
 | # | Rule |
 |---|---|
 | **R1** | Propose first, wait for Rob's explicit approval, then execute. This covers everything the project produces: code, tests, data files, manuals, help texts, configuration, installers, and any structural decision. |
-| **R2** | **Bookkeeping exception.** `LOGBOOK.md` and `STATE.md` are written and kept up to date without asking, and every change is reported in the same reply. |
+| **R2** | **Bookkeeping exception.** `LOGBOOK.md`, `STATE.md` and `literature/to-fetch.md` are written and kept up to date without asking, and so is the `verified` field of `docs/references.bib` (§13). Every change is reported in the same reply. |
 | **R3** | `CLAUDE.md` and `ROUTE.md` are changed **only with Rob's express authorisation**. Propose the exact diff and wait. One exception: marking a stage as done in the progress table of `ROUTE.md` when the stage is approved needs no authorisation; it is reported like bookkeeping. |
 | **R4** | Explain the reasoning and the intermediate steps, not just the result. Name the alternatives considered and why they were discarded. |
 | **R5** | When something is ambiguous or unknown, ask. Do not assume and do not invent facts about file formats, programs or instruments. |
 | **R6** | Ask questions as plain text inside the message. Never use interactive question widgets. |
-| **R7** | Conversation with Rob is in Spanish. Everything in the repository is in English (§7), except user-facing translations and the manuals. |
+| **R7** | Conversation with Rob is in Spanish. Everything in the repository is in English (§7), except user-facing translations, the manuals and `docs/acceptance-checklist.md`, which is written in Spanish. |
 | **R8** | Nothing is a final product. Every deliverable is living, reviewable material. |
 | **R9** | A decision recorded in `LOGBOOK.md` is not changed silently. To revise it, open a new decision that references the old ID. |
 | **R10** | Once a task is approved, do not reopen it inside another task. If later work reveals a defect in it, record it in `STATE.md` as a defect and ask. |
@@ -113,13 +113,18 @@ execute, test, evaluate, repeat until everything passes) and tests the app as a 
 | **Corpus** | Every file of the test corpus (§8) is loaded, processed and plotted without error, and a gallery of the resulting figures is produced for Rob to look through. | `tests/corpus/` | E2 |
 | **End to end** | Scripted user journeys through the real interface, each one crossing several stages (e.g. import a theoretical file, broaden it, paste an experimental one on top, normalise, pick peaks, export). | `tests/e2e/` | E4 |
 | **Installed app** | The same journeys, reduced, on the frozen app on each system. | CI smoke job | E15 |
-| **Manual** | Rob uses the app freely and against a short checklist. | checklist in `docs/` | every version tag |
+| **Acceptance** | Rob and the group use the installed app as users against `docs/acceptance-checklist.md`. | the checklist | in full before the beta; the items touched by a change at every later version tag |
 
 Rules:
 
 - Each stage **adds** its own integration tests and at least one end-to-end journey
   that combines the new stage with earlier ones. The journeys are listed in
   `docs/test-scenarios.md`; the list only grows.
+- From E4, every task that adds or changes something the user sees appends its items
+  to `docs/acceptance-checklist.md` in the same commit (what the user does, what they
+  must see, which task makes it possible). The list only grows; changing an item
+  needs a new decision (R9). A GUI task that adds a function without its checklist
+  items fails.
 - A stage is approved only when all its tasks are approved, its gate in `ROUTE.md`
   passes, **and** the integration cycle is green.
 - When the integration cycle fails, the failure is traced to the task that owns the
@@ -191,6 +196,7 @@ graphing/                    repository root
 ├── notes/             working notes for the group
 ├── build/             everything a build produces: executables and installers
 │                      (NOT published; generated, never edited by hand)
+├── literature/        PDFs of cited sources and the to-fetch list (NOT published, §13)
 └── brainstorming/     session transcript and photos (NOT published)
 ```
 
@@ -324,7 +330,7 @@ values, or "must fail with error X").
   in general. Tests that use them carry the marker `local_data` and are skipped with a
   clear message when the files are absent; they are an extra local check, never a
   requirement for a task to pass.
-- `LOGBOOK.md`, `brainstorming/` and `build/` are git-ignored as well.
+- `LOGBOOK.md`, `brainstorming/`, `build/` and `literature/` are git-ignored as well.
 
 ---
 
@@ -343,6 +349,8 @@ values, or "must fail with error X").
     gates listed in the `ROUTE.md` progress table, Z for fixes made between gates.
   - `1.0.0` is the first public release: the full v1.0 scope, installers for the three
     systems, manual in three languages.
+  - Beta versions are marked `-beta.N` (`1.0.0-beta.1`): the finished app given to a
+    few testers, whose bug reports are fixed before the release candidates.
   - Release candidates are marked `-rc.N` (`1.0.0-rc.1`).
   - Approving a task does not change the version by itself. Changes wait under
     "Unreleased" in `CHANGELOG.md` until the next gate or fix release.
@@ -360,7 +368,7 @@ values, or "must fail with error X").
   cycle (§4.2) is green.
 - The repository is **public** on GitHub. Published: source, tests, the corpus,
   `CLAUDE.md`, `ROUTE.md`, `STATE.md`, documentation. Not published: `LOGBOOK.md`,
-  `brainstorming/`, `build/`, `tests/reference/`.
+  `brainstorming/`, `build/`, `tests/reference/`, `literature/`.
 - The working folder is inside Dropbox. Run git from one machine at a time and let
   Dropbox finish syncing before switching.
 
@@ -413,3 +421,32 @@ pending inputs; known defects. Keep it under two screens: it is read every sessi
 - The IR guide is compiled from several cited sources with its own layout. No table
   or figure is copied from a book.
 - Open legal question (UCR Oficina Jurídica) is tracked in `STATE.md`.
+
+---
+
+## 13. References
+
+Decision D-20261118-01 (closes open decision D-09).
+
+- **One bibliography.** `docs/references.bib` (BibTeX, published). Every source cited
+  anywhere in the repository (code, `docs/`, manual, help texts, IR guide data) has an
+  entry there and is cited by its key. The file is created with the first citation.
+- **Style: ACS.** The manual uses biblatex with the `chem-acs` style. Markdown documents
+  (`docs/theory.md`) cite `[key]` and end with a reference list in ACS format. Code cites
+  the key in the comment or docstring, e.g. `# Source: [iupac2023], section 4.7.1`.
+- **Verification never blocks work.** Each entry carries a field
+  `verified = {pending}` or `verified = {YYYY-MM-DD; literature/<key>.pdf; what was checked}`.
+  A pending entry may be used. When Claude cites a source whose PDF is not in
+  `literature/`, it adds it to `literature/to-fetch.md` (reference, DOI or URL, where it
+  is cited, what to check). When Rob adds the PDF, Claude verifies the entry in the next
+  session, updates `verified`, removes it from the list and reports. An error found this
+  way is recorded as a defect (R10).
+- **Release gate.** Every entry cited in published text is verified before the beta
+  (T16.6).
+- **Source hierarchy** for constants, conventions and acceptance criteria: standards
+  (IUPAC, CODATA, BIPM) > program manuals and primary articles > textbooks > secondary
+  sources (blogs, lecture notes, other groups' notes). Secondary sources may support a
+  claim, never stand alone.
+- **No invented bibliographic data** (R5). Anything written from memory is `pending`.
+- `literature/` holds the PDFs, named `<key>.pdf`. It is git-ignored: the PDFs are
+  copyrighted.

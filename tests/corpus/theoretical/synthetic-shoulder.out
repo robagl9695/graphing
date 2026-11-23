@@ -1,0 +1,19 @@
+Artificial ORCA-4.2.1-style output for absspectra examples.
+
+Not a real calculation. One strong transition at 25000 cm-1 and a weak one
+2800 cm-1 to the blue, so with a moderate width the second shows up as a
+shoulder on the flank of the first, not as its own peak. Used to check the
+--peaks shoulder classification.
+
+                * O   R   C   A *
+
+-----------------------------------------------------------------------------
+         ABSORPTION SPECTRUM VIA TRANSITION ELECTRIC DIPOLE MOMENTS
+-----------------------------------------------------------------------------
+State   Energy    Wavelength  fosc         T2        TX        TY        TZ
+        (cm-1)      (nm)                 (au**2)    (au)      (au)      (au)
+-----------------------------------------------------------------------------
+   1   25000.0    400.0   1.000000000   1.00000   1.00000   0.00000   0.00000
+   2   27800.0    359.7   0.170000000   1.00000   1.00000   0.00000   0.00000
+
+-----------------------------------------------------------------------------

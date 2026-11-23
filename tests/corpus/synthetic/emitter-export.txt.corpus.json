@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "kind": "synthetic",
+  "source": {
+    "program_or_instrument": "synthetic: from qclab-utilities examples",
+    "version": "n/a",
+    "molecule": "none (artificial bands)",
+    "producer": "QCLab, graphing project"
+  },
+  "publishable": {
+    "confirmed": true,
+    "by": "Rob",
+    "date": "2026-11-17"
+  },
+  "reader": "text",
+  "expect": {
+    "table": {
+      "rows": 471,
+      "columns": 2,
+      "first": [
+        360.0,
+        1e-05
+      ],
+      "last": [
+        830.0,
+        0.0
+      ],
+      "header": [
+        "wavelength_nm",
+        "intensity_au"
+      ]
+    },
+    "spectra": {
+      "count": 1,
+      "names": [
+        "intensity_au"
+      ],
+      "x_reordered": false
+    }
+  },
+  "mapping": {
+    "x_column": 0,
+    "y_columns": [
+      1
+    ],
+    "x_quantity": "WAVELENGTH",
+    "x_unit": "NM",
+    "y_quantity": "INTENSITY",
+    "technique": "UV_VIS",
+    "origin": "EXPERIMENTAL"
+  }
+}

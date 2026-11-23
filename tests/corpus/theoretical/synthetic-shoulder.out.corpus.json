@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "kind": "synthetic",
+  "source": {
+    "program_or_instrument": "ORCA, artificial output, 4.2.1 layout (not real)",
+    "version": "4.2.1 (layout only)",
+    "molecule": "none (artificial transitions)",
+    "producer": "QCLab, qclab-utilities examples"
+  },
+  "publishable": {
+    "confirmed": true,
+    "by": "Rob",
+    "date": "2026-11-17"
+  },
+  "reader": "orca",
+  "expect": {
+    "transitions": 2,
+    "first": [
+      25000.0,
+      400.0,
+      1.0
+    ],
+    "last": [
+      27800.0,
+      359.7,
+      0.17
+    ],
+    "columns": [
+      "energy_cm1",
+      "wavelength_nm",
+      "fosc"
+    ]
+  }
+}
