@@ -11,7 +11,7 @@ Last updated: 2026-11-22 · Session S019
 (1) close E3 and mark E1 done (verified);
 (2) E2 stays open; it depends only on T2.1 AC4 (real instrument exports from Kenneth); marked so in `ROUTE.md` (Rob, S019);
 (3) the 0.1.0 bump, the CHANGELOG release and the tag `v0.1.0`;
-(4) the push and a CI run (agreed by Rob): X-04 is fixed, so the push is unblocked; next step;
+(4) the push and a CI run: done (S019); `main` pushed at `a047ff4`, CI run 45087873338 green on Ubuntu, macOS and Windows;
 (5) X-04 fixed (S019, see known defects).
 Then T4.1.
 
